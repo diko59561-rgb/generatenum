@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Generator Format Nomor</title>
+
+<style>
+body{
+ margin:0;
+ font-family:Segoe UI,Arial;
+ background:linear-gradient(135deg,#141e30,#243b55);
+ color:#fff;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ min-height:100vh;
+}
+
+.card{
+ width:95%;
+ max-width:550px;
+ background:#0b0f1a;
+ border-radius:16px;
+ padding:20px;
+ box-shadow:0 0 30px rgba(0,0,0,.6);
+}
+
+h2{text-align:center;margin-top:0}
+
+input,textarea,button{
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+ border:none;
+ margin-top:10px;
+ font-size:14px;
+}
+
+input,textarea{
+ background:#05070d;
+ border:1px solid #222;
+ color:#fff;
+}
+
+textarea{height:280px;resize:none}
+
+button{
+ background:#00c9a7;
+ font-weight:bold;
+ color:#000;
+ cursor:pointer;
+}
+button:hover{background:#00ffe0}
+
+.check{
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:6px;
+ margin-top:10px;
+ text-align:center;
+}
+
+label{
+ background:#05070d;
+ border:1px solid #222;
+ border-radius:8px;
+ padding:6px;
+}
+
+.footer{
+ text-align:center;
+ font-size:12px;
+ opacity:.5;
+ margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h2>Generator Strip Nomor Telepon</h2>
+
+<input id="num" placeholder="Masukkan nomor tanpa 0 / 62">
+
+<div class="check">
+<label><input type="checkbox" value="1"> Strip 1</label>
+<label><input type="checkbox" value="2"> Strip 2</label>
+<label><input type="checkbox" value="3"> Strip 3</label>
+<label><input type="checkbox" value="4"> Strip 4</label>
+<label><input type="checkbox" value="5"> Strip 5</label>
+</div>
+
+<button onclick="gen()">Generate</button>
+<button onclick="copy()">Copy Nomor</button>
+
+<textarea id="out"></textarea>
+<div class="footer">Web Version – Bisa diakses publik</div>
+</div>
+
+<script>
+function comb(arr,k){
+ let r=[];
+ function f(s,c){
+  if(c.length==k){r.push(c.slice());return;}
+  for(let i=s;i<arr.length;i++)f(i+1,c.concat(arr[i]));
+ }
+ f(0,[]);
+ return r;
+}
+
+let pure=[];
+
+function gen(){
+ let num=numEl.value.trim();
+ let chosen=[...document.querySelectorAll("input:checked")].map(x=>parseInt(x.value));
+ if(!num||chosen.length==0)return alert("Isi nomor & pilih strip");
+
+ let n=num.length,pos=[];
+ for(let i=1;i<n;i++)pos.push(i);
+
+ pure=[];
+ chosen.forEach(k=>{
+  comb(pos,k).forEach(c=>{
+   let s="";
+   for(let i=0;i<n;i++){
+    s+=num[i];
+    if(c.includes(i+1))s+="-";
+   }
+   pure.push(s);
+  });
+ });
+
+ outEl.value=pure.map((v,i)=>(i+1)+". "+v).join("\n");
+}
+
+function copy(){
+ navigator.clipboard.writeText(pure.join("\n"));
+ alert("Berhasil disalin tanpa nomor urut");
+}
+
+const numEl=document.getElementById("num");
+const outEl=document.getElementById("out");
+</script>
+
+</body>
+</html>
